@@ -33,6 +33,7 @@ class TutorialCoachMarkWidget extends StatefulWidget {
     this.rootOverlay = false,
     this.showSkipInLastTarget = false,
     this.imageFilter,
+    this.backgroundSemanticLabel,
   })  : assert(targets.length > 0),
         super(key: key);
 
@@ -59,6 +60,7 @@ class TutorialCoachMarkWidget extends StatefulWidget {
   final bool rootOverlay;
   final bool showSkipInLastTarget;
   final ImageFilter? imageFilter;
+  final String? backgroundSemanticLabel;
 
   @override
   TutorialCoachMarkWidgetState createState() => TutorialCoachMarkWidgetState();
@@ -90,6 +92,7 @@ class TutorialCoachMarkWidgetState extends State<TutorialCoachMarkWidget>
             pulseEnable: widget.pulseEnable,
             rootOverlay: widget.rootOverlay,
             imageFilter: widget.imageFilter,
+            backgroundSemanticLabel: widget.backgroundSemanticLabel,
             clickTarget: (target) {
               return widget.clickTarget?.call(target);
             },
