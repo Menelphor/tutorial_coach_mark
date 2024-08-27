@@ -20,6 +20,7 @@ class TargetFocus {
     this.focusAnimationDuration,
     this.unFocusAnimationDuration,
     this.pulseVariation,
+    this.semanticsLabel,
   }) : assert(keyTarget != null || targetPosition != null);
 
   final dynamic identify;
@@ -37,6 +38,7 @@ class TargetFocus {
   final Duration? focusAnimationDuration;
   final Duration? unFocusAnimationDuration;
   final Tween<double>? pulseVariation;
+  final String? semanticsLabel;
 
   @override
   String toString() {

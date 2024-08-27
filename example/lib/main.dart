@@ -43,6 +43,7 @@ class MyHomePageState extends State<MyHomePage> {
   GlobalKey keyBottomNavigation1 = GlobalKey();
   GlobalKey keyBottomNavigation2 = GlobalKey();
   GlobalKey keyBottomNavigation3 = GlobalKey();
+  final isTutorialOpen = ValueNotifier(false);
 
   @override
   void initState() {
@@ -53,175 +54,191 @@ class MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          IconButton(
-            // key: keyButton1,
-            icon: const Icon(Icons.add),
-            onPressed: () {},
-          ),
-          PopupMenuButton(
-            key: keyButton1,
-            icon: const Icon(Icons.view_list, color: Colors.white),
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                child: Text("Is this"),
-              ),
-              const PopupMenuItem(
-                child: Text("What"),
-              ),
-              const PopupMenuItem(
-                child: Text("You Want?"),
-              ),
-            ],
-          )
-        ],
-      ),
-      body: Container(
-        color: Colors.white,
-        child: Stack(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 100.0),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  key: keyButton,
-                  color: Colors.blue,
-                  height: 100,
-                  width: MediaQuery.of(context).size.width - 50,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: ElevatedButton(
-                      child: const Icon(Icons.remove_red_eye),
-                      onPressed: () {
-                        showTutorial();
-                      },
+    return ValueListenableBuilder<bool>(
+        valueListenable: isTutorialOpen,
+        builder: (context, open, __) {
+          return Semantics(
+            excludeSemantics: open,
+            child: PopScope(
+              canPop: !open,
+              onPopInvokedWithResult: (canOpen, _) {
+                if (canOpen) {
+                  tutorialCoachMark.finish();
+                }
+              },
+              child: Scaffold(
+                appBar: AppBar(
+                  actions: <Widget>[
+                    IconButton(
+                      // key: keyButton1,
+                      icon: const Icon(Icons.add),
+                      onPressed: () {},
                     ),
+                    PopupMenuButton(
+                      key: keyButton1,
+                      icon: const Icon(Icons.view_list, color: Colors.white),
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          child: Text("Is this"),
+                        ),
+                        const PopupMenuItem(
+                          child: Text("What"),
+                        ),
+                        const PopupMenuItem(
+                          child: Text("You Want?"),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                body: Container(
+                  color: Colors.white,
+                  child: Stack(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 100.0),
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: Container(
+                            key: keyButton,
+                            color: Colors.blue,
+                            height: 100,
+                            width: MediaQuery.of(context).size.width - 50,
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: ElevatedButton(
+                                child: const Icon(Icons.remove_red_eye),
+                                onPressed: () {
+                                  showTutorial();
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: ElevatedButton(
+                            key: keyButton2,
+                            onPressed: () {},
+                            child: Container(),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.all(50.0),
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: ElevatedButton(
+                              key: keyButton3,
+                              onPressed: () {},
+                              child: Container(),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.all(50.0),
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: ElevatedButton(
+                              key: keyButton4,
+                              onPressed: () {},
+                              child: Container(),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.all(50.0),
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: ElevatedButton(
+                              key: keyButton5,
+                              onPressed: () {},
+                              child: Container(),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: 50,
-                height: 50,
-                child: ElevatedButton(
-                  key: keyButton2,
-                  onPressed: () {},
-                  child: Container(),
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(50.0),
-                child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: ElevatedButton(
-                    key: keyButton3,
-                    onPressed: () {},
-                    child: Container(),
-                  ),
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: const EdgeInsets.all(50.0),
-                child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: ElevatedButton(
-                    key: keyButton4,
-                    onPressed: () {},
-                    child: Container(),
-                  ),
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(50.0),
-                child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: ElevatedButton(
-                    key: keyButton5,
-                    onPressed: () {},
-                    child: Container(),
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-      bottomNavigationBar: Stack(
-        children: [
-          SizedBox(
-            height: 50,
-            child: Row(
-              children: [
-                Expanded(
-                    child: Center(
-                  child: SizedBox(
-                    key: keyBottomNavigation1,
-                    height: 40,
-                    width: 40,
-                  ),
-                )),
-                Expanded(
-                    child: Center(
-                  child: SizedBox(
-                    key: keyBottomNavigation2,
-                    height: 40,
-                    width: 40,
-                  ),
-                )),
-                Expanded(
-                  child: Center(
-                    child: SizedBox(
-                      key: keyBottomNavigation3,
-                      height: 40,
-                      width: 40,
+                bottomNavigationBar: Stack(
+                  children: [
+                    SizedBox(
+                      height: 50,
+                      child: Row(
+                        children: [
+                          Expanded(
+                              child: Center(
+                            child: SizedBox(
+                              key: keyBottomNavigation1,
+                              height: 40,
+                              width: 40,
+                            ),
+                          )),
+                          Expanded(
+                              child: Center(
+                            child: SizedBox(
+                              key: keyBottomNavigation2,
+                              height: 40,
+                              width: 40,
+                            ),
+                          )),
+                          Expanded(
+                            child: Center(
+                              child: SizedBox(
+                                key: keyBottomNavigation3,
+                                height: 40,
+                                width: 40,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                    BottomNavigationBar(
+                      items: const <BottomNavigationBarItem>[
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.home),
+                          label: 'Home',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.business),
+                          label: 'Business',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.school),
+                          label: 'School',
+                        ),
+                      ],
+                      // currentIndex: _selectedIndex,
+                      selectedItemColor: Colors.amber[800],
+                      onTap: (index) {},
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-          BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.business),
-                label: 'Business',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.school),
-                label: 'School',
-              ),
-            ],
-            // currentIndex: _selectedIndex,
-            selectedItemColor: Colors.amber[800],
-            onTap: (index) {},
-          ),
-        ],
-      ),
-    );
+          );
+        });
   }
 
   void showTutorial() {
+    isTutorialOpen.value = true;
     tutorialCoachMark.show(context: context);
   }
 
@@ -232,8 +249,10 @@ class MyHomePageState extends State<MyHomePage> {
       textSkip: "SKIP",
       paddingFocus: 10,
       opacityShadow: 0.5,
+      backgroundSemanticLabel: "Das ist der Hintergrund",
       imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
       onFinish: () {
+        isTutorialOpen.value = false;
         print("finish");
       },
       onClickTarget: (target) {
@@ -262,6 +281,8 @@ class MyHomePageState extends State<MyHomePage> {
         keyTarget: keyBottomNavigation1,
         alignSkip: Alignment.topRight,
         enableOverlayTab: true,
+        enableTargetTab: false,
+        semanticsLabel: 'This is a bottom navigation item 1',
         contents: [
           TargetContent(
             align: ContentAlign.top,
@@ -289,6 +310,7 @@ class MyHomePageState extends State<MyHomePage> {
         identify: "keyBottomNavigation2",
         keyTarget: keyBottomNavigation2,
         alignSkip: Alignment.topRight,
+        semanticsLabel: 'This is a bottom navigation item 2',
         contents: [
           TargetContent(
             align: ContentAlign.top,

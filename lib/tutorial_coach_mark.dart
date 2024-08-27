@@ -155,6 +155,29 @@ class TutorialCoachMark {
     }
   }
 
+  // void show({required BuildContext context, bool rootOverlay = false}) {
+  //   SemanticsService.announce('Tutorial wird geöffnet', TextDirection.ltr);
+  //   Navigator.of(context).push(RawDialogRoute(
+  //       barrierColor: Colors.transparent,
+  //       pageBuilder: (context, __, ___) {
+  //         return _buildOverlay(rootOverlay: rootOverlay);
+  //       }));
+  // }
+  //
+  // void finish(BuildContext context) {
+  //   onFinish?.call();
+  //   Navigator.of(context).pop();
+  // }
+  //
+  // void skip(BuildContext context) {
+  //   bool removeOverlay = onSkip?.call() ?? true;
+  //   if (removeOverlay) {
+  //     Navigator.of(context).pop();
+  //   } else {
+  //     next();
+  //   }
+  // }
+
   bool get isShowing => _overlayEntry != null;
 
   GlobalKey<TutorialCoachMarkWidgetState> get widgetKey => _widgetKey;

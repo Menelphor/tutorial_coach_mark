@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:tutorial_coach_mark/src/clipper/circle_clipper.dart';
 import 'package:tutorial_coach_mark/src/clipper/rect_clipper.dart';
 import 'package:tutorial_coach_mark/src/paint/light_paint.dart';
@@ -80,6 +81,7 @@ abstract class AnimatedFocusLightState extends State<AnimatedFocusLight>
   int nextIndex = 0;
 
   Future _revertAnimation();
+
   void _listener(AnimationStatus status);
 
   @override
@@ -273,9 +275,7 @@ abstract class AnimatedFocusLightState extends State<AnimatedFocusLight>
         : _targetFocus.radius ?? borderRadiusDefault;
     return BorderRadius.circular(radius);
   }
-}
 
-class AnimatedStaticFocusLightState extends AnimatedFocusLightState {
   double get left => (_targetPosition?.offset.dx ?? 0) - _getPaddingFocus() * 2;
 
   double get top => (_targetPosition?.offset.dy ?? 0) - _getPaddingFocus() * 2;
@@ -290,19 +290,16 @@ class AnimatedStaticFocusLightState extends AnimatedFocusLightState {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      label: widget.backgroundSemanticLabel,
-      button: true,
-      child: InkWell(
-        excludeFromSemantics: true,
-        onTap: _targetFocus.enableOverlayTab
-            ? () => _tapHandler(overlayTap: true)
-            : null,
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (_, child) {
-            _progressAnimated = _curvedAnimation.value;
-            return Stack(
+    return InkWell(
+      onTap: _targetFocus.enableOverlayTab
+          ? () => _tapHandler(overlayTap: true)
+          : null,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (_, child) {
+          _progressAnimated = _curvedAnimation.value;
+          return buildSecondaryAnimation(
+            Stack(
               children: <Widget>[
                 _getLightPaint(_targetFocus),
                 Positioned(
@@ -316,21 +313,31 @@ class AnimatedStaticFocusLightState extends AnimatedFocusLightState {
 
                         /// Essential for collecting [TapDownDetails]. Do not make [null]
                         : () {},
-                    child: Container(
-                      color: Colors.transparent,
-                      width: width,
-                      height: height,
+                    child: Semantics(
+                      label: _targetFocus.semanticsLabel,
+                      sortKey: const OrdinalSortKey(0),
+                      container: true,
+                      button: _targetFocus.enableTargetTab,
+                      child: Container(
+                        color: Colors.transparent,
+                        width: width,
+                        height: height,
+                      ),
                     ),
                   ),
                 )
               ],
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 
+  Widget buildSecondaryAnimation(Widget child);
+}
+
+class AnimatedStaticFocusLightState extends AnimatedFocusLightState {
   @override
   Future _revertAnimation() {
     return _controller.reverse();
@@ -349,6 +356,9 @@ class AnimatedStaticFocusLightState extends AnimatedFocusLightState {
       widget.removeFocus?.call();
     }
   }
+
+  @override
+  Widget buildSecondaryAnimation(Widget child) => child;
 }
 
 class AnimatedPulseFocusLightState extends AnimatedFocusLightState {
@@ -359,14 +369,6 @@ class AnimatedPulseFocusLightState extends AnimatedFocusLightState {
 
   bool _finishFocus = false;
   bool _initReverse = false;
-
-  get left => (_targetPosition?.offset.dx ?? 0) - _getPaddingFocus() * 2;
-
-  get top => (_targetPosition?.offset.dy ?? 0) - _getPaddingFocus() * 2;
-
-  get width => (_targetPosition?.size.width ?? 0) + _getPaddingFocus() * 4;
-
-  get height => (_targetPosition?.size.height ?? 0) + _getPaddingFocus() * 4;
 
   @override
   void initState() {
@@ -383,57 +385,6 @@ class AnimatedPulseFocusLightState extends AnimatedFocusLightState {
     );
 
     _controllerPulse.addStatusListener(_listenerPulse);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      label: widget.backgroundSemanticLabel,
-      button: true,
-      child: InkWell(
-        excludeFromSemantics: true,
-        onTap: _targetFocus.enableOverlayTab
-            ? () => _tapHandler(overlayTap: true)
-            : null,
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (_, child) {
-            _progressAnimated = _curvedAnimation.value;
-            return AnimatedBuilder(
-              animation: _controllerPulse,
-              builder: (_, child) {
-                if (_finishFocus) {
-                  _progressAnimated = _tweenPulse.value;
-                }
-                return Stack(
-                  children: <Widget>[
-                    _getLightPaint(_targetFocus),
-                    Positioned(
-                      left: left,
-                      top: top,
-                      child: InkWell(
-                        borderRadius: _betBorderRadiusTarget(),
-                        onTap: _targetFocus.enableTargetTab
-                            ? () => _tapHandler(targetTap: true)
-
-                            /// Essential for collecting [TapDownDetails]. Do not make [null]
-                            : () {},
-                        onTapDown: _tapHandlerForPosition,
-                        child: Container(
-                          color: Colors.transparent,
-                          width: width,
-                          height: height,
-                        ),
-                      ),
-                    )
-                  ],
-                );
-              },
-            );
-          },
-        ),
-      ),
-    );
   }
 
   @override
@@ -502,6 +453,19 @@ class AnimatedPulseFocusLightState extends AnimatedFocusLightState {
   Animation _createTweenAnimation(Tween<double> tween) {
     return tween.animate(
       CurvedAnimation(parent: _controllerPulse, curve: Curves.ease),
+    );
+  }
+
+  @override
+  Widget buildSecondaryAnimation(Widget child) {
+    return AnimatedBuilder(
+      animation: _controllerPulse,
+      builder: (context, _) {
+        if (_finishFocus) {
+          _progressAnimated = _tweenPulse.value;
+        }
+        return child;
+      },
     );
   }
 }
